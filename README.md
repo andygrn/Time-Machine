@@ -5,7 +5,7 @@ Pushstate history and ajax helper for fancy websites. It handles:
 - State change detection
 - Replacing the URL
 - Loading the new page via ajax
-- Binding <a> tags to push state rather than navigate
+- Binding `<a>` tags to push state rather than navigate
 - Highlighting the correct new navigation item
 - Replacing the page title
 
@@ -41,6 +41,8 @@ Ajax page template:
 </div>
 ```
 
+Javascript:
+
 ```javascript
 var time_machine = TimeMachine( {
 	site_root: 'http://www.website.com',
@@ -68,7 +70,7 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 - `site_root` - The site root URL (no trailing slash)
 - `ajax_receptacle` - The element the ajax template will be inserted into
 - `metadata_element_selector` - The selector of the element with page metadata attributes (`data-tm-title` and `data-tm-id`)
-- `nav_items` - A NodeList of navigation elements with page id attribute (`data-tm-match`)
+- `nav_items` - A NodeList of navigation elements with id match attribute (`data-tm-match`)
 - `nav_selected_class` - The class to give navigation elements when they are active
 - `frameless_root` - (Optional, Default `''`) The subdirectory where your ajax templates are stored (opening slash, no trailing slash)
 - `state_change_selector` - (Optional, Default `'a'`) The selector(s) of `<a>`s you want to trigger state changes
