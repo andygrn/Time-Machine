@@ -52,9 +52,12 @@ var time_machine = TimeMachine( {
 	metadata_element_selector: '#main',
 	nav_items: document.querySelectorAll( '#nav-primary li' ),
 	nav_selected_class: 'active',
+	defer_page_load: true,
 	debug: true,
-	beforeNewPageLoad: function(){
+	beforeNewPageLoad: function( loadPage ){
 		document.body.className = 'loading';
+		// do something fancy, then...
+		loadPage();
 	},
 	afterNewPageLoad: function(){
 		document.body.className = '';
@@ -75,6 +78,7 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 - `frameless_root` - (Optional, Default `''`) The subdirectory where your ajax templates are stored (opening slash, no trailing slash)
 - `state_change_selector` - (Optional, Default `'a'`) The selector(s) of `<a>`s you want to trigger state changes
 - `title_while_loading` - (Optional, Default `'Loading...'`) The page title whilst a page load is in progress
+- `defer_page_load` - (Optional, Default `false`) See below
 - `beforeNewPageLoad` - (Optional) Function to run before a new page is loaded
 - `afterNewPageLoad` - (Optional) Function to run after a new page is loaded
 - `debug` - (Optional, Default `false`) Generate console messages
@@ -82,6 +86,10 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 ## Methods
 
 - `pushStateChange( url )` - Manually load a new page
+
+## `defer_page_load`
+
+When this option is enabled, the loading process will begin but the ajax request won't be automatic. The `beforeNewPageLoad` callback will be passed a function that triggers it. This means you can manually control when the old page disappears, giving you the opportunity to trigger any fancy page transition effects. The example above demonstrates how your callback might look.
 
 ## TODO
 

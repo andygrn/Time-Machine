@@ -25,6 +25,11 @@
 			return;
 		}
 
+		if( inputs.defer_page_load && !inputs.beforeNewPageLoad ){
+			debugLog( 'Missing beforeNewPageLoad callback means page will never load - add callback or disable defer_page_load', 'warn' );
+			return;
+		}
+
 		var site_root = stripTrailingSlash( inputs.site_root );
 		var frameless_root = inputs.frameless_root ? stripTrailingSlash( inputs.frameless_root ) : '';
 		var state_change_selector = inputs.state_change_selector || 'a';
@@ -59,11 +64,20 @@
 		function handleStateChange(){
 			debugLog( 'State change detected' );
 			var pathname = getPathName( window.location.href );
-			if( inputs.beforeNewPageLoad ){
+			if( inputs.defer_page_load ){
+				debugLog( 'Deferring page load' );
 				debugLog( 'Running "beforeNewPageLoad" callback' );
-				inputs.beforeNewPageLoad();
+				inputs.beforeNewPageLoad( function(){
+					loadPage( pathname );
+				} );
 			}
-			loadPage( pathname );
+			else{
+				if( inputs.beforeNewPageLoad ){
+					debugLog( 'Running "beforeNewPageLoad" callback' );
+					inputs.beforeNewPageLoad();
+				}
+				loadPage( pathname );
+			}
 		}
 
 		function loadPage( pathname ){
