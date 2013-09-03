@@ -5,6 +5,7 @@ Pushstate history and ajax helper for fancy websites. It handles:
 - State change detection
 - Replacing the URL
 - Loading the new page via ajax
+- Running any javascript in the new page
 - Binding `<a>` tags to push state rather than navigate
 - Highlighting the correct new navigation item
 - Replacing the page title
