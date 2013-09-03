@@ -97,6 +97,7 @@
 			var metadata_element = inputs.ajax_receptacle.querySelector( inputs.metadata_element_selector );
 			var title = metadata_element.getAttribute( 'data-tm-title' );
 			var page_id = metadata_element.getAttribute( 'data-tm-id' );
+			runPageScripts( inputs.ajax_receptacle );
 			setTitle( title );
 			highlightNav( page_id );
 			bindTriggers( inputs.ajax_receptacle );
@@ -112,6 +113,14 @@
 			debugLog( 'Page failed to load, turning back time...', 'warn' );
 			window.History.back();
 			debugLog( '------' );
+		}
+
+		function runPageScripts( container ){
+			debugLog( 'Running page scripts' );
+			var page_scripts = container.querySelectorAll( 'script' );
+			for( var i = 0; i < page_scripts.length; i += 1 ){
+				( new Function( page_scripts[i].innerHTML ) ).call( window );
+			}
 		}
 
 		function setTitle( title ){
