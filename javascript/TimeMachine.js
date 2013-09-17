@@ -35,6 +35,7 @@
 		var state_change_selector = inputs.state_change_selector || 'a';
 		var title_element = document.querySelector( 'title' );
 		var title_while_loading = inputs.title_while_loading || 'Loading...';
+		var title_suffix = inputs.title_suffix || '';
 		var regex_toggle_class = new RegExp( '(?:^|\\s)' + inputs.nav_selected_class.toString() + '(?!\\S)', 'gi' );
 
 		window.History.Adapter.bind( window, 'statechange', handleStateChange );
@@ -124,8 +125,9 @@
 		}
 
 		function setTitle( title ){
+			var title = ( typeof title === 'undefined' ? '' : title ) + title_suffix;
 			debugLog( 'Setting page title to "' + title + '"' );
-			title_element.innerHTML = typeof title === 'undefined' ? '' : title;
+			title_element.innerHTML = title;
 		}
 
 		function highlightNav( page_id ){
