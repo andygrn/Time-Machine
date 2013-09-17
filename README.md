@@ -75,9 +75,9 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 ## Inputs
 
 - `site_root` - The site root URL (no trailing slash)
-- `ajax_receptacle` - The element the ajax template will be inserted into
-- `metadata_element_selector` - The selector of the element with page metadata attributes (`data-tm-title` and `data-tm-id`)
-- `nav_items` - A NodeList of navigation elements with id match attribute (`data-tm-match`)
+- `ajax_receptacle` - The `HTMLElement` the ajax template will be inserted into
+- `metadata_element_selector` - The selector of the element with page metadata attributes (`data-tm-title`, `data-tm-id`, `data-tm-data`)
+- `nav_items` - A `NodeList` of navigation elements with id match attribute (`data-tm-match`)
 - `nav_selected_class` - The class to give navigation elements when they are active
 - `frameless_root` - (Optional, Default `''`) The subdirectory where your ajax templates are stored (opening slash, no trailing slash)
 - `state_change_selector` - (Optional, Default `'a'`) The selector(s) of `<a>`s you want to trigger state changes
