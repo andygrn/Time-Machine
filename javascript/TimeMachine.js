@@ -106,7 +106,13 @@
 			bindTriggers( inputs.ajax_receptacle );
 			if( inputs.afterNewPageLoad ){
 				debugLog( 'Running "afterNewPageLoad" callback' );
-				inputs.afterNewPageLoad();
+				try{
+					var page_data = JSON.parse( metadata_element.getAttribute( 'data-tm-data' ) );
+				}
+				catch( e ){
+					debugLog( 'Malformed JSON in page data attribute, ignoring', 'warn' );
+				}
+				inputs.afterNewPageLoad( page_data );
 			}
 			debugLog( 'Done' );
 			debugLog( '------' );

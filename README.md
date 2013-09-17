@@ -10,7 +10,7 @@ Pushstate history and ajax helper for fancy websites. It handles:
 - Highlighting the correct new navigation item
 - Replacing the page title
 
-Navigation highlighting and page titles are done using html `data-` attributes on the ajaxed content. See below for an example.
+Navigation highlighting and page titles are done using html `data-` attributes on the ajaxed content. You can also provide custom page data as JSON. See below for an example.
 
 If a browser doesn't support pushState, Time Machine won't start up and the site will work normally.
 
@@ -36,7 +36,7 @@ Site frame:
 Ajax page template:
 
 ```html
-<div id="main" data-tm-title="Cool Page - Website Name" data-tm-id="cool-page">
+<div id="main" data-tm-title="Cool Page - Website Name" data-tm-id="cool-page" data-tm-data='{"coolness":"very"}'>
 	<h1>Cool Page</h1>
 	<p>Nulla debitis earum impedit laboriosam minus? Officiis, maiores atque ea velit minima ex numquam quaerat quisquam? Delectus, hic porro voluptatem quod rem!</p>
 </div>
@@ -60,7 +60,10 @@ var time_machine = TimeMachine( {
 		// do something fancy, then...
 		loadPage();
 	},
-	afterNewPageLoad: function(){
+	afterNewPageLoad: function( page_data ){
+		if( page_data.coolness === "very" ){
+			console.log( 'So cool.' );
+		}
 		document.body.className = '';
 	}
 } );
@@ -82,7 +85,7 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 - `title_suffix` - (Optional, Default `''`) A string to append to every page title (usually a site name)
 - `defer_page_load` - (Optional, Default `false`) See below
 - `beforeNewPageLoad` - (Optional) Function to run before a new page is loaded
-- `afterNewPageLoad` - (Optional) Function to run after a new page is loaded
+- `afterNewPageLoad` - (Optional) Function to run after a new page is loaded - the first argument is the loaded page's data (`data-tm-data`)
 - `debug` - (Optional, Default `false`) Generate console messages
 
 ## Methods
