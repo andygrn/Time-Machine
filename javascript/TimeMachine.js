@@ -44,9 +44,11 @@
 		debugLog( '------' );
 
 		function debugLog( message, type ){
-			if( debug ){
+			if( debug && console ){
 				var message_formatted = '%cTime Machine: %c' + message;
-				console[type || 'log']( message_formatted, 'font-weight:bold;', '' );
+				if( console[type || 'log'] ){
+					console[type || 'log']( message_formatted, 'font-weight:bold;', '' );
+				}
 			}
 		}
 
