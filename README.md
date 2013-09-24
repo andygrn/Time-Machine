@@ -16,7 +16,6 @@ If a browser doesn't support pushState, Time Machine won't start up and the site
 
 ## Current dependencies
 
-- [History.js Native](https://github.com/browserstate/history.js)
 - [Eventie](https://github.com/desandro/eventie)
 - [Ajax.js](https://github.com/honza/ajax.js)
 

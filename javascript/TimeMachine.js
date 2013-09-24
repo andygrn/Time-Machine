@@ -2,7 +2,6 @@
 	Time Machine - Pushstate history and ajax helper
 	@andygrn 2013
 	Requires:
-		- History.js Native (https://github.com/browserstate/history.js)
 		- Eventie (https://github.com/desandro/eventie)
 		- Ajax.js (https://github.com/honza/ajax.js)
 */
@@ -15,13 +14,13 @@
 
 		var debug = inputs.debug ? true : false;
 
-		if( typeof window.History === 'undefined' || typeof window.eventie === 'undefined' || typeof window.ajax === 'undefined' ){
-			debugLog( 'One or more dependencies are missing', 'warn' );
+		if( !( window.history && window.history.pushState ) ){
+			debugLog( 'History API is unsupported - Time Machine disabled' );
 			return;
 		}
 
-		if( !window.History.enabled ){
-			debugLog( 'History.js is disabled', 'warn' );
+		if( typeof window.eventie === 'undefined' || typeof window.ajax === 'undefined' ){
+			debugLog( 'One or more dependencies are missing', 'warn' );
 			return;
 		}
 
@@ -37,8 +36,9 @@
 		var title_while_loading = inputs.title_while_loading || 'Loading...';
 		var title_suffix = inputs.title_suffix || '';
 		var regex_toggle_class = new RegExp( '(?:^|\\s)' + inputs.nav_selected_class.toString() + '(?!\\S)', 'gi' );
+		var popstate_initial = true; // Used to fix Chrome's impatient popstate
 
-		window.History.Adapter.bind( window, 'statechange', handleStateChange );
+		eventie.bind( window, 'popstate', handleStateChange );
 		bindTriggers( document.body );
 		debugLog( 'Time Machine ready on "' + site_root + '"' );
 		debugLog( '------' );
@@ -61,10 +61,14 @@
 			else{
 				debugLog( 'Pushing new state "' + url + '"' );
 				window.History.pushState( {}, title_while_loading, stripped_href );
+				handleStateChange();
 			}
 		}
 
 		function handleStateChange(){
+			if( popstate_initial ){
+				return;
+			}
 			debugLog( 'State change detected' );
 			var pathname = getPathName( window.location.href );
 			if( inputs.defer_page_load ){
@@ -120,7 +124,7 @@
 
 		function onLoadFail(){
 			debugLog( 'Page failed to load, turning back time...', 'warn' );
-			window.History.back();
+			window.history.back();
 			debugLog( '------' );
 		}
 
@@ -157,6 +161,7 @@
 			debugLog( 'Binding ' + triggers.length + ' state change triggers inside "' + context.localName + ( context.id ? '#' + context.id : '' ) + '"' );
 			var pushStateChangeEvent = function( event ){
 				event.preventDefault();
+				popstate_initial = false;
 				pushStateChange( this.href );
 			};
 			for( var i = triggers.length; i > 0; i -= 1 ){
