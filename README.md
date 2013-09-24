@@ -17,7 +17,7 @@ If a browser doesn't support pushState, Time Machine won't start up and the site
 ## Current dependencies
 
 - [Eventie](https://github.com/desandro/eventie)
-- [Ajax.js](https://github.com/honza/ajax.js)
+- [Ajax.js](https://github.com/andygrn/ajax.js)
 
 ## Example usage
 
@@ -97,4 +97,3 @@ When this option is enabled, the loading process will begin but the ajax request
 ## TODO
 
 - Cancel the current page transition if the state changes again during loading OR ignore state changes while loading is in progress
-- Test this in multiple browsers
