@@ -33,7 +33,6 @@
 		var frameless_root = inputs.frameless_root ? stripTrailingSlash( inputs.frameless_root ) : '';
 		var state_change_selector = inputs.state_change_selector || 'a';
 		var title_element = document.querySelector( 'title' );
-		var title_while_loading = inputs.title_while_loading || 'Loading...';
 		var title_suffix = inputs.title_suffix || '';
 		var regex_toggle_class = new RegExp( '(?:^|\\s)' + inputs.nav_selected_class.toString() + '(?!\\S)', 'gi' );
 		var popstate_initial = true; // Used to fix Chrome's impatient popstate
@@ -60,7 +59,7 @@
 			}
 			else{
 				debugLog( 'Pushing new state "' + url + '"' );
-				window.History.pushState( {}, title_while_loading, stripped_href );
+				window.history.pushState( {}, null, stripped_href );
 				handleStateChange();
 			}
 		}

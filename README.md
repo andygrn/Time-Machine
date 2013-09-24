@@ -80,7 +80,6 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 - `nav_selected_class` - The class to give navigation elements when they are active
 - `frameless_root` - (Optional, Default `''`) The subdirectory where your ajax templates are stored (opening slash, no trailing slash)
 - `state_change_selector` - (Optional, Default `'a'`) The selector(s) of `<a>`s you want to trigger state changes
-- `title_while_loading` - (Optional, Default `'Loading...'`) The page title whilst a page load is in progress
 - `title_suffix` - (Optional, Default `''`) A string to append to every page title (usually a site name)
 - `defer_page_load` - (Optional, Default `false`) See below
 - `beforeNewPageLoad` - (Optional) Function to run before a new page is loaded
