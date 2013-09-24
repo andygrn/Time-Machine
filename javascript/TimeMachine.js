@@ -44,9 +44,9 @@
 
 		function debugLog( message, type ){
 			if( debug && console ){
-				var message_formatted = '%cTime Machine: %c' + message;
+				var message = 'Time Machine: ' + message;
 				if( console[type || 'log'] ){
-					console[type || 'log']( message_formatted, 'font-weight:bold;', '' );
+					console[type || 'log']( message );
 				}
 			}
 		}
