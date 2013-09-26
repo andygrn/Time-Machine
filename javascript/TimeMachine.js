@@ -2,7 +2,6 @@
 	Time Machine - Pushstate history and ajax helper
 	@andygrn 2013
 	Requires:
-		- Eventie (https://github.com/desandro/eventie)
 		- Ajax.js (https://github.com/honza/ajax.js)
 */
 
@@ -19,7 +18,7 @@
 			return;
 		}
 
-		if( typeof window.eventie === 'undefined' || typeof window.ajax === 'undefined' ){
+		if( typeof window.ajax === 'undefined' ){
 			debugLog( 'One or more dependencies are missing', 'warn' );
 			return;
 		}
@@ -37,7 +36,7 @@
 		var regex_toggle_class = new RegExp( '(?:^|\\s)' + inputs.nav_selected_class.toString() + '(?!\\S)', 'gi' );
 		var popstate_initial = true; // Used to fix Chrome's impatient popstate
 
-		eventie.bind( window, 'popstate', handleStateChange );
+		window.addEventListener( 'popstate', handleStateChange, false );
 		bindTriggers( document.body );
 		debugLog( 'Time Machine ready on "' + site_root + '"' );
 		debugLog( '------' );
@@ -165,7 +164,7 @@
 			};
 			for( var i = triggers.length; i > 0; i -= 1 ){
 				var trigger = triggers[i-1];
-				eventie.bind( trigger, 'click', pushStateChangeEvent );
+				trigger.addEventListener( 'click', pushStateChangeEvent, false );
 			}
 		}
 
