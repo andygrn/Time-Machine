@@ -27,6 +27,7 @@
 		var title_element = document.querySelector( 'title' );
 		var title_suffix = inputs.title_suffix || '';
 		var regex_toggle_class = new RegExp( '(?:^|\\s)' + inputs.nav_selected_class.toString() + '(?!\\S)', 'gi' );
+		var state_change_in_progress = false;
 		var unsolicited_popstate = true; // Used to fix Chrome's impatient popstate
 
 		window.addEventListener( 'popstate', handleStateChange, false );
@@ -49,6 +50,10 @@
 				debugLog( 'State change matches current state, ignoring' );
 				debugLog( '------' );
 			}
+			else if( state_change_in_progress ){
+				debugLog( 'State change already in progress, ignoring' );
+				debugLog( '------' );
+			}
 			else{
 				debugLog( 'Pushing new state "' + url + '"' );
 				window.history.pushState( {}, null, stripped_href );
@@ -61,6 +66,7 @@
 				return;
 			}
 			debugLog( 'State change detected' );
+			state_change_in_progress = true;
 			var pathname = getPathName( window.location.href );
 			if( inputs.defer_page_load ){
 				debugLog( 'Deferring page load' );
@@ -103,6 +109,7 @@
 				}
 				inputs.afterNewPageLoad( page_data );
 			}
+			state_change_in_progress = false;
 			debugLog( 'Done' );
 			debugLog( '------' );
 		}
