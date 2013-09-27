@@ -14,11 +14,6 @@ Navigation highlighting and page titles are done using html `data-` attributes o
 
 If a browser doesn't support pushState, Time Machine won't start up and the site will work normally.
 
-## Current dependencies
-
-- [Eventie](https://github.com/desandro/eventie)
-- [Ajax.js](https://github.com/andygrn/ajax.js)
-
 ## Example usage
 
 Site frame:

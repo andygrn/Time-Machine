@@ -1,8 +1,6 @@
 /*
 	Time Machine - Pushstate history and ajax helper
 	@andygrn 2013
-	Requires:
-		- Ajax.js (https://github.com/honza/ajax.js)
 */
 
 ( function(){
@@ -15,11 +13,6 @@
 
 		if( !( window.history && window.history.pushState ) ){
 			debugLog( 'History API is unsupported - Time Machine disabled' );
-			return;
-		}
-
-		if( typeof window.ajax === 'undefined' ){
-			debugLog( 'One or more dependencies are missing', 'warn' );
 			return;
 		}
 
@@ -72,8 +65,8 @@
 			if( inputs.defer_page_load ){
 				debugLog( 'Deferring page load' );
 				debugLog( 'Running "beforeNewPageLoad" callback' );
-				inputs.beforeNewPageLoad( function(){
-					loadPage( pathname );
+				inputs.beforeNewPageLoad( function( custom_headers ){
+					loadPage( pathname, custom_headers );
 				} );
 			}
 			else{
@@ -85,15 +78,9 @@
 			}
 		}
 
-		function loadPage( pathname ){
+		function loadPage( pathname, custom_headers ){
 			debugLog( 'Requesting new page "' + pathname + '"' );
-			ajax( {
-				type: 'get',
-				url: site_root + frameless_root + pathname,
-				timeout: 5000,
-				onSuccess: onLoadSuccess,
-				onError: onLoadFail
-			} );
+			doAjaxRequest( site_root + frameless_root + pathname, custom_headers );
 		}
 
 		function onLoadSuccess( data ){
@@ -181,6 +168,39 @@
 			}
 			return url;
 		}
+
+		function doAjaxRequest( url, headers ){
+			if( !url ){
+				return;
+			}
+			headers = headers || [];
+			var xmlhr = new XMLHttpRequest();
+			var request_completed = false;
+			xmlhr.open( 'GET', url, true );
+			xmlhr.setRequestHeader( 'X-Requested-With', 'XMLHttpRequest' );
+			for( var i = 0; i < headers.length; i += 1 ){
+				xmlhr.setRequestHeader( headers[i][0], headers[i][1] );
+			}
+			xmlhr.addEventListener( 'readystatechange', function(){
+				if( xmlhr.readyState === 4 && !request_completed ){
+					if( ( xmlhr.status >= 200 && xmlhr.status < 300 ) || xmlhr.status === 304 ){
+						onLoadSuccess( xmlhr.response );
+					}
+					else{
+						onLoadFail();
+					}
+					request_completed = true;
+				}
+			}, false );
+			setTimeout( function(){
+				if( request_completed ){
+					return;
+				}
+				request_completed = true;
+				onLoadFail();
+			}, 8000 );
+			xmlhr.send( null );
+		};
 
 		return {
 			pushStateChange: pushStateChange
