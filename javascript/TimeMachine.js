@@ -27,11 +27,11 @@
 		var title_element = document.querySelector( 'title' );
 		var title_suffix = inputs.title_suffix || '';
 		var regex_toggle_class = new RegExp( '(?:^|\\s)' + inputs.nav_selected_class.toString() + '(?!\\S)', 'gi' );
-		var popstate_initial = true; // Used to fix Chrome's impatient popstate
+		var unsolicited_popstate = true; // Used to fix Chrome's impatient popstate
 
 		window.addEventListener( 'popstate', handleStateChange, false );
 		bindTriggers( document.body );
-		debugLog( 'Time Machine ready on "' + site_root + '"' );
+		debugLog( 'Ready on "' + site_root + '"' );
 		debugLog( '------' );
 
 		function debugLog( message, type ){
@@ -57,7 +57,7 @@
 		}
 
 		function handleStateChange(){
-			if( popstate_initial ){
+			if( unsolicited_popstate ){
 				return;
 			}
 			debugLog( 'State change detected' );
@@ -146,7 +146,7 @@
 			debugLog( 'Binding ' + triggers.length + ' state change triggers inside "' + context.localName + ( context.id ? '#' + context.id : '' ) + '"' );
 			var pushStateChangeEvent = function( event ){
 				event.preventDefault();
-				popstate_initial = false;
+				unsolicited_popstate = false;
 				pushStateChange( this.href );
 			};
 			for( var i = triggers.length; i > 0; i -= 1 ){
