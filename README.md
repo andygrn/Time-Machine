@@ -52,7 +52,10 @@ var time_machine = TimeMachine( {
 	beforeNewPageLoad: function( loadPage ){
 		document.body.className = 'loading';
 		// do something fancy, then...
-		loadPage();
+		loadPage( [
+			['X-Custom-Header-1', 'Content'],
+			['X-Custom-Header-2', 'Content']
+		] );
 	},
 	afterNewPageLoad: function( page_data ){
 		if( page_data.coolness === "very" ){
@@ -87,8 +90,6 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 
 ## `defer_page_load`
 
-When this option is enabled, the loading process will begin but the ajax request won't be automatic. The `beforeNewPageLoad` callback will be passed a function that triggers it. This means you can manually control when the old page disappears, giving you the opportunity to trigger any fancy page transition effects. The example above demonstrates how your callback might look.
+When this option is enabled, the loading process will begin but the ajax request won't be automatic; the `beforeNewPageLoad` callback will be passed a function that triggers it. This means you can manually control when the old page disappears, giving you the opportunity to trigger any fancy page transition effects.
 
-## TODO
-
-- Cancel the current page transition if the state changes again during loading OR ignore state changes while loading is in progress
+The callback accepts an array of HTTP headers to send with the ajax request, which you can use to customise output on the server side. The example above demonstrates how your callback might look.
