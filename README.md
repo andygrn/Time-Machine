@@ -30,7 +30,7 @@ Site frame:
 Ajax page template:
 
 ```html
-<div id="main" data-tm-title="Cool Page - Website Name" data-tm-id="cool-page" data-tm-data='{"coolness":"very"}'>
+<div id="main" data-tm-title="Cool Page" data-tm-id="cool-page" data-tm-data='{"coolness":"very"}'>
 	<h1>Cool Page</h1>
 	<p>Nulla debitis earum impedit laboriosam minus? Officiis, maiores atque ea velit minima ex numquam quaerat quisquam? Delectus, hic porro voluptatem quod rem!</p>
 </div>
@@ -47,6 +47,7 @@ var time_machine = TimeMachine( {
 	metadata_element_selector: '#main',
 	nav_items: document.querySelectorAll( '#nav-primary li' ),
 	nav_selected_class: 'active',
+	title_suffix: ' - Website Name',
 	defer_page_load: true,
 	debug: true,
 	beforeNewPageLoad: function( loadPage ){
@@ -91,6 +92,6 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 
 ## `defer_page_load`
 
-When this option is enabled, the loading process will begin but the ajax request won't be automatic; the `beforeNewPageLoad` callback will be passed a function that triggers it. This means you can manually control when the old page disappears, giving you the opportunity to trigger any fancy page transition effects.
+When this option is enabled, the loading process will begin but the ajax request won't be automatic; the `beforeNewPageLoad` callback will be passed a function that triggers it. This means you can manually control when (or if) the old page disappears, giving you the opportunity to trigger any fancy page transition effects.
 
 The callback accepts an array of HTTP headers to send with the ajax request, which you can use to customise output on the server side. The example above demonstrates how your callback might look.
