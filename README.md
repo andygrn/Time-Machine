@@ -87,6 +87,7 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 ## Methods
 
 - `pushStateChange( url )` - Manually load a new page
+- `setTitle( string )` - Manually set the page title (appending `title_suffix`)
 
 ## `defer_page_load`
 

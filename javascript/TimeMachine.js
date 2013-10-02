@@ -210,7 +210,8 @@
 		};
 
 		return {
-			pushStateChange: pushStateChange
+			pushStateChange: pushStateChange,
+			setTitle: setTitle
 		};
 
 	};
