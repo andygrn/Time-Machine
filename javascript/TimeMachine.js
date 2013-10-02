@@ -27,7 +27,7 @@
 		var title_element = document.querySelector( 'title' );
 		var title_suffix = inputs.title_suffix || '';
 		var regex_toggle_class = new RegExp( '(?:^|\\s)' + inputs.nav_selected_class.toString() + '(?!\\S)', 'gi' );
-		var state_change_in_progress = false;
+		var page_load_in_progress = false;
 		var unsolicited_popstate = true; // Used to fix Chrome's impatient popstate
 
 		window.addEventListener( 'popstate', handleStateChange, false );
@@ -50,8 +50,8 @@
 				debugLog( 'State change matches current state, ignoring' );
 				debugLog( '------' );
 			}
-			else if( state_change_in_progress ){
-				debugLog( 'State change already in progress, ignoring' );
+			else if( page_load_in_progress ){
+				debugLog( 'Page load already in progress, ignoring' );
 				debugLog( '------' );
 			}
 			else{
@@ -66,12 +66,12 @@
 				return;
 			}
 			debugLog( 'State change detected' );
-			state_change_in_progress = true;
 			var pathname = getPathName( window.location.href );
 			if( inputs.defer_page_load ){
 				debugLog( 'Deferring page load' );
 				debugLog( 'Running "beforeNewPageLoad" callback' );
 				inputs.beforeNewPageLoad( function( custom_headers ){
+					page_load_in_progress = true;
 					loadPage( pathname, custom_headers );
 				} );
 			}
@@ -80,6 +80,7 @@
 					debugLog( 'Running "beforeNewPageLoad" callback' );
 					inputs.beforeNewPageLoad();
 				}
+				page_load_in_progress = true;
 				loadPage( pathname );
 			}
 		}
@@ -109,13 +110,14 @@
 				}
 				inputs.afterNewPageLoad( page_data );
 			}
-			state_change_in_progress = false;
+			page_load_in_progress = false;
 			debugLog( 'Done' );
 			debugLog( '------' );
 		}
 
 		function onLoadFail(){
 			debugLog( 'Page failed to load, turning back time...', 'warn' );
+			page_load_in_progress = false;
 			window.history.back();
 			debugLog( '------' );
 		}
