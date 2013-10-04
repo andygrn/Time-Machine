@@ -82,6 +82,7 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 - `frameless_root` - (Optional, Default `''`) The subdirectory where your ajax templates are stored (opening slash, no trailing slash)
 - `state_change_selector` - (Optional, Default `'a'`) The selector(s) of `<a>`s you want to trigger state changes
 - `title_suffix` - (Optional, Default `''`) A string to append to every page title (usually a site name)
+- `remove_trailing_slash` - (Optional, Default `false`) Don't use a trailing slash in URLs
 - `defer_page_load` - (Optional, Default `false`) See below
 - `beforeNewPageLoad` - (Optional) Function to run before a new page is loaded
 - `afterNewPageLoad` - (Optional) Function to run after a new page is loaded - the first argument is the loaded page's data (`data-tm-data`)

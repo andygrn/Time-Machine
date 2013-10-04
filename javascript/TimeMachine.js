@@ -21,8 +21,9 @@
 			return;
 		}
 
-		var site_root = stripTrailingSlash( inputs.site_root );
-		var frameless_root = inputs.frameless_root ? stripTrailingSlash( inputs.frameless_root ) : '';
+		var remove_trailing_slash = inputs.remove_trailing_slash ? true : false;
+		var site_root = normalisePathSegment( inputs.site_root, true );
+		var frameless_root = inputs.frameless_root ? normalisePathSegment( inputs.frameless_root ) : '';
 		var state_change_selector = inputs.state_change_selector || 'a';
 		var title_element = document.querySelector( 'title' );
 		var title_suffix = inputs.title_suffix || '';
@@ -45,8 +46,8 @@
 		}
 
 		function pushStateChange( url ){
-			var stripped_href = stripTrailingSlash( url );
-			if( stripped_href === stripTrailingSlash( window.location.href ) ){
+			var stripped_href = normalisePathSegment( url, true );
+			if( stripped_href === normalisePathSegment( window.location.href ) ){
 				debugLog( 'State change matches current state, ignoring' );
 				debugLog( '------' );
 			}
@@ -167,16 +168,28 @@
 
 		function getPathName( url ){
 			url = url.replace( site_root, '' );
-			url = stripTrailingSlash( url );
-			return url === '' ? '/' : url;
+			url = normalisePathSegment( url );
+			return url;
 		}
 
-		function stripTrailingSlash( url ){
-			url = url.split( '#' )[0];
-			if( url.charAt( url.length - 1 ) === '/' ){
-				url = url.substr( 0, url.length - 1 );
+		function normalisePathSegment( segment, is_first_segment ){
+			is_first_segment = !!is_first_segment;
+			var normalised_segment = segment.split( '#' );
+			var segment_has_opening_slash = normalised_segment[0].charAt( 0 ) === '/';
+			var segment_has_trailing_slash = normalised_segment[0].charAt( normalised_segment[0].length - 1 ) === '/';
+			if( remove_trailing_slash && segment_has_trailing_slash ){
+				normalised_segment[0] = normalised_segment[0].substr( 0, normalised_segment[0].length - 1 );
 			}
-			return url;
+			if( !remove_trailing_slash && segment_has_opening_slash ){
+				normalised_segment[0] = normalised_segment[0].substr( 1 );
+			}
+			if( !remove_trailing_slash && !segment_has_trailing_slash ){
+				normalised_segment[0] += '/';
+			}
+			if( remove_trailing_slash && !segment_has_opening_slash && !is_first_segment ){
+				normalised_segment[0] = '/' + normalised_segment[0];
+			}
+			return normalised_segment.join( '#' );
 		}
 
 		function doAjaxRequest( url, headers ){
