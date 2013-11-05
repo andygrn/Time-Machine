@@ -75,7 +75,7 @@
 				inputs.beforeNewPageLoad( function( custom_headers ){
 					loadPage( pathname, custom_headers );
 				}, function(){
-					page_load_in_progress = false;
+					state_change_in_progress = false;
 				} );
 			}
 			else{
