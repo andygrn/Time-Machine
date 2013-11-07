@@ -27,7 +27,7 @@
 		var state_change_selector = inputs.state_change_selector || 'a';
 		var title_element = document.querySelector( 'title' );
 		var title_suffix = inputs.title_suffix || '';
-		var regex_toggle_class = new RegExp( '(?:^|\\s)' + inputs.nav_selected_class.toString() + '(?!\\S)', 'gi' );
+		var regex_toggle_class = new RegExp( '(?:^|\\s)' + ( typeof inputs.nav_items === 'undefined' ? '' : inputs.nav_selected_class.toString() ) + '(?!\\S)', 'gi' );
 		var state_change_in_progress = false;
 		var unsolicited_popstate = true; // Used to fix Chrome's impatient popstate
 
@@ -139,6 +139,9 @@
 		}
 
 		function highlightNav( page_id ){
+			if( typeof inputs.nav_items === 'undefined' || inputs.nav_items.length === 0 ){
+				return;
+			}
 			debugLog( 'Highlighting navigation item "' + page_id + '"' );
 			for( var i = inputs.nav_items.length; i > 0; i -= 1 ){
 				var nav_item = inputs.nav_items[i-1];
