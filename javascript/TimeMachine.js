@@ -46,6 +46,7 @@
 		}
 
 		function pushStateChange( url ){
+			unsolicited_popstate = false;
 			var stripped_href = normalisePathSegment( url, true );
 			if( stripped_href === normalisePathSegment( window.location.href ) ){
 				debugLog( 'State change matches current state, ignoring' );
@@ -160,7 +161,6 @@
 			debugLog( 'Binding ' + triggers.length + ' state change triggers inside "' + context.localName + ( context.id ? '#' + context.id : '' ) + '"' );
 			var pushStateChangeEvent = function( event ){
 				event.preventDefault();
-				unsolicited_popstate = false;
 				pushStateChange( this.href );
 			};
 			for( var i = triggers.length; i > 0; i -= 1 ){
