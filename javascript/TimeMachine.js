@@ -48,7 +48,7 @@
 		function pushStateChange( url ){
 			unsolicited_popstate = false;
 			var stripped_href = normalisePathSegment( url, true );
-			if( stripped_href === normalisePathSegment( window.location.href ) ){
+			if( stripped_href === normalisePathSegment( window.location.href, true ) ){
 				debugLog( 'State change matches current state, ignoring' );
 				debugLog( '------' );
 			}
