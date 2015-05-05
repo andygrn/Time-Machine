@@ -38,7 +38,7 @@
 
 		function debugLog( message, type ){
 			if( debug && console ){
-				var message = 'Time Machine: ' + message;
+				message = 'Time Machine: ' + message;
 				if( console[type || 'log'] ){
 					console[type || 'log']( message );
 				}
@@ -105,8 +105,9 @@
 			bindTriggers( inputs.ajax_receptacle );
 			if( inputs.afterNewPageLoad ){
 				debugLog( 'Running "afterNewPageLoad" callback' );
+				var page_data = null;
 				try{
-					var page_data = JSON.parse( metadata_element.getAttribute( 'data-tm-data' ) );
+					page_data = JSON.parse( metadata_element.getAttribute( 'data-tm-data' ) );
 				}
 				catch( e ){
 					debugLog( 'Malformed JSON in page data attribute, ignoring', 'warn' );
@@ -134,7 +135,7 @@
 		}
 
 		function setTitle( title ){
-			var title = ( typeof title === 'undefined' ? '' : title ) + title_suffix;
+			title = ( typeof title === 'undefined' ? '' : title ) + title_suffix;
 			debugLog( 'Setting page title to "' + title + '"' );
 			title_element.innerHTML = title;
 		}
@@ -226,7 +227,7 @@
 				onLoadFail();
 			}, 8000 );
 			xmlhr.send( null );
-		};
+		}
 
 		return {
 			pushStateChange: pushStateChange,
