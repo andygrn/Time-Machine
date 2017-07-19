@@ -32,7 +32,8 @@
 		var unsolicited_popstate = true; // Used to fix Chrome's impatient popstate
 
 		window.addEventListener( 'popstate', handleStateChange, false );
-		bindTriggers( document.body );
+		window.addEventListener( 'click', handlePotentialTriggerClick, false );
+
 		debugLog( 'Ready on "' + site_root + '"' );
 		debugLog( '------' );
 
@@ -48,11 +49,7 @@
 		function pushStateChange( url ){
 			unsolicited_popstate = false;
 			var stripped_href = normalisePathSegment( url, true );
-			if( stripped_href === normalisePathSegment( window.location.href, true ) ){
-				debugLog( 'State change matches current state, ignoring' );
-				debugLog( '------' );
-			}
-			else if( state_change_in_progress ){
+			if( state_change_in_progress ){
 				debugLog( 'Page load already in progress, ignoring' );
 				debugLog( '------' );
 			}
@@ -88,6 +85,18 @@
 			}
 		}
 
+		function handlePotentialTriggerClick( event ){
+			var target = event.target;
+			while( target !== null ){
+				if( target.matches( state_change_selector ) ){
+					event.preventDefault();
+					pushStateChange( target.href );
+					break;
+				}
+				target = target.parentElement;
+			}
+		}
+
 		function loadPage( pathname, custom_headers ){
 			debugLog( 'Requesting new page "' + pathname + '"' );
 			doAjaxRequest( site_root + frameless_root + pathname, custom_headers );
@@ -102,7 +111,6 @@
 			runPageScripts( inputs.ajax_receptacle );
 			setTitle( title );
 			highlightNav( page_id );
-			bindTriggers( inputs.ajax_receptacle );
 			if( inputs.afterNewPageLoad ){
 				debugLog( 'Running "afterNewPageLoad" callback' );
 				var page_data = null;
@@ -154,19 +162,6 @@
 				else{
 					nav_item.className = nav_item.className.replace( regex_toggle_class, '' );
 				}
-			}
-		}
-
-		function bindTriggers( context ){
-			var triggers = context.querySelectorAll( state_change_selector );
-			debugLog( 'Binding ' + triggers.length + ' state change triggers inside "' + context.localName + ( context.id ? '#' + context.id : '' ) + '"' );
-			var pushStateChangeEvent = function( event ){
-				event.preventDefault();
-				pushStateChange( this.href );
-			};
-			for( var i = triggers.length; i > 0; i -= 1 ){
-				var trigger = triggers[i-1];
-				trigger.addEventListener( 'click', pushStateChangeEvent, false );
 			}
 		}
 
