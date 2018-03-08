@@ -6,7 +6,7 @@ Pushstate history and ajax helper for fancy websites. It handles:
 - Replacing the URL
 - Loading the new page via ajax
 - Running any javascript in the new page
-- Binding `<a>` tags to push state rather than navigate
+- Binding local `<a>` tags to push state rather than navigate
 - Highlighting the correct new navigation item
 - Replacing the page title
 
@@ -40,15 +40,10 @@ Javascript:
 
 ```javascript
 var time_machine = TimeMachine( {
-	site_root: 'http://www.website.com',
-	frameless_root: '/ajax',
 	ajax_receptacle: document.querySelector( '#ajax-receptacle' ),
-	state_change_selector: 'a',
 	metadata_element_selector: '#main',
 	nav_items: document.querySelectorAll( '#nav-primary li' ),
 	nav_selected_class: 'active',
-	title_suffix: ' - Website Name',
-	remove_trailing_slash: true,
 	defer_page_load: true,
 	debug: true,
 	beforeNewPageLoad: function( loadPage, dontLoadPage ){
@@ -75,15 +70,10 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 
 ## Inputs
 
-- `site_root` - The site root URL (no trailing slash)
 - `ajax_receptacle` - The `HTMLElement` the ajax template will be inserted into
 - `metadata_element_selector` - The selector of the element with page metadata attributes (`data-tm-title`, `data-tm-id`, `data-tm-data`)
 - `nav_items` - A `NodeList` of navigation elements with id match attribute (`data-tm-match`)
 - `nav_selected_class` - The class to give navigation elements when they are active
-- `frameless_root` - (Optional, Default `''`) The subdirectory where your ajax templates are stored (opening slash, no trailing slash)
-- `state_change_selector` - (Optional, Default `'a'`) The selector(s) of `<a>`s you want to trigger state changes
-- `title_suffix` - (Optional, Default `''`) A string to append to every page title (usually a site name)
-- `remove_trailing_slash` - (Optional, Default `false`) Don't use a trailing slash in URLs
 - `defer_page_load` - (Optional, Default `false`) See below
 - `beforeNewPageLoad` - (Optional) Function to run before a new page is loaded
 - `afterNewPageLoad` - (Optional) Function to run after a new page is loaded - the first argument is the loaded page's data (`data-tm-data`)
