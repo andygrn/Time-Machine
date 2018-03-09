@@ -73,15 +73,19 @@
 		}
 
 		function handlePotentialTriggerClick( event ) {
-			if ( !event.target.hasAttribute( 'href' ) ) {
-				return;
+			let target = event.target;
+			while ( target !== null ) {
+				if ( target.hasAttribute( 'href' ) ) {
+					const path = target.href.replace( host_regex, '' );
+					if ( path[0] !== '/' ) {
+						return;
+					}
+					event.preventDefault();
+					pushStateChange( target.href );
+					return;
+				}
+				target = target.parentElement;
 			}
-			const path = event.target.href.replace( host_regex, '' );
-			if ( path[0] !== '/' ) {
-				return;
-			}
-			event.preventDefault();
-			pushStateChange( event.target.href );
 		}
 
 		function onLoadSuccess( data ) {
