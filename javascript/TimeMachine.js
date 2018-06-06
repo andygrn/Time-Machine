@@ -3,7 +3,7 @@
 	@andygrn 2018
 */
 
-( function() {
+( () => {
 
 	'use strict';
 
@@ -16,17 +16,25 @@
 			return;
 		}
 
-		if ( inputs.defer_page_load && !inputs.beforeNewPageLoad ) {
-			debugLog( 'Missing beforeNewPageLoad callback means page will never load - add callback or disable defer_page_load', 'warn' );
+		if ( !inputs.default_ajax_receptacle_id ) {
+			debugLog( 'No default ajax receptacle specified - Time Machine disabled', 'warn' );
+			return;
+		}
+
+		if ( !inputs.beforeNewPageLoad ) {
+			debugLog( 'No beforeNewPageLoad callback - Time Machine disabled', 'warn' );
 			return;
 		}
 
 		const host_regex = new RegExp( '^' + window.location.protocol + '//' + window.location.host, 'i' );
+		const default_ajax_receptacle = document.getElementById( inputs.default_ajax_receptacle_id );
 		const title_element = document.querySelector( 'title' );
-		let state_change_in_progress = false;
+		let last_load_url = null;
 
-		window.addEventListener( 'popstate', handleStateChange, false );
-		window.addEventListener( 'click', handlePotentialTriggerClick, false );
+		window.history.replaceState( { receptacle: inputs.default_ajax_receptacle_id }, null, null );
+
+		window.addEventListener( 'popstate', handleStateChange );
+		window.addEventListener( 'click', handlePotentialTriggerClick );
 
 		debugLog( 'Ready' );
 		debugLog( '------' );
@@ -41,35 +49,15 @@
 			}
 		}
 
-		function pushStateChange( url ) {
-			if ( state_change_in_progress ) {
-				debugLog( 'Page load already in progress, ignoring' );
-				debugLog( '------' );
-				return;
-			}
-			debugLog( 'Pushing new state "' + url + '"' );
-			state_change_in_progress = true;
-			window.history.pushState( {}, null, url );
-			handleStateChange();
+		function pushStateChange( url, receptacle_id ) {
+			debugLog( 'Pushing new state "' + url + '" into receptacle "' + receptacle_id + '"' );
+			window.history.pushState( { receptacle: receptacle_id }, null, url );
+			performStateChangeTasks( receptacle_id );
 		}
 
-		function handleStateChange() {
+		function handleStateChange( event ) {
 			debugLog( 'State change detected' );
-			if ( inputs.defer_page_load ) {
-				debugLog( 'Deferring page load' );
-				debugLog( 'Running "beforeNewPageLoad" callback' );
-				inputs.beforeNewPageLoad( ( custom_headers ) => {
-					getUrlViaAjax( window.location.href, custom_headers );
-				}, () => {
-					state_change_in_progress = false;
-				} );
-				return;
-			}
-			if ( inputs.beforeNewPageLoad ) {
-				debugLog( 'Running "beforeNewPageLoad" callback' );
-				inputs.beforeNewPageLoad();
-			}
-			getUrlViaAjax( window.location.href );
+			performStateChangeTasks( event.state.receptacle );
 		}
 
 		function handlePotentialTriggerClick( event ) {
@@ -81,47 +69,67 @@
 						return;
 					}
 					event.preventDefault();
-					pushStateChange( target.href );
+					const link_receptacle_id = target.getAttribute( 'data-tm-receptacle' );
+					pushStateChange(
+						target.href,
+						( link_receptacle_id === null ? inputs.default_ajax_receptacle_id : link_receptacle_id )
+					);
 					return;
 				}
 				target = target.parentElement;
 			}
 		}
 
-		function onLoadSuccess( data ) {
-			debugLog( 'Page successfully loaded' );
-			inputs.ajax_receptacle.innerHTML = data;
-			const metadata_element = inputs.ajax_receptacle.querySelector( inputs.metadata_element_selector );
+		function performStateChangeTasks( receptacle_id ) {
+			debugLog( 'Running "beforeNewPageLoad" callback' );
+			inputs.beforeNewPageLoad( receptacle_id, ( custom_headers ) => {
+				loadUrlIntoReceptacle( window.location.href, receptacle_id, custom_headers );
+			} );
+		}
+
+		function onLoadSuccess( data, receptacle_id ) {
+			debugLog( 'Page data retrieved' );
+			const frag = document.createElement( 'div' );
+			let receptacle_element = document.getElementById( receptacle_id );
+			if ( receptacle_element === null ) {
+				debugLog( 'Receptacle #' + receptacle_id + ' not found in current page, loading into default receptacle' );
+				receptacle_id = inputs.default_ajax_receptacle_id;
+				receptacle_element = default_ajax_receptacle;
+			}
+			frag.innerHTML = data;
+			receptacle_element.innerHTML = frag.querySelector( '#' + receptacle_id ).innerHTML;
+			const metadata_element = receptacle_element.firstElementChild;
 			const title = metadata_element.getAttribute( 'data-tm-title' );
-			const page_id = metadata_element.getAttribute( 'data-tm-id' );
-			runPageScripts( inputs.ajax_receptacle );
-			setTitle( title );
-			highlightNav( page_id );
+			if ( title !== null ) {
+				setTitle( title );
+			}
+			runPageScripts( receptacle_element );
 			if ( inputs.afterNewPageLoad ) {
 				debugLog( 'Running "afterNewPageLoad" callback' );
-				let page_data = null;
-				try {
-					page_data = JSON.parse( metadata_element.getAttribute( 'data-tm-data' ) );
-				} catch ( e ) {
-					debugLog( 'Malformed JSON in page data attribute, ignoring', 'warn' );
+				let page_data_parsed = null;
+				const page_data = metadata_element.getAttribute( 'data-tm-data' );
+				if ( page_data !== null ) {
+					try {
+						page_data_parsed = JSON.parse( page_data );
+					} catch ( e ) {
+						debugLog( 'Malformed JSON in page data attribute, ignoring', 'warn' );
+					}
 				}
-				inputs.afterNewPageLoad( page_data );
+				inputs.afterNewPageLoad( receptacle_id, page_data_parsed );
 			}
-			state_change_in_progress = false;
 			debugLog( 'Done' );
 			debugLog( '------' );
 		}
 
 		function onLoadFail() {
 			debugLog( 'Page failed to load, turning back time...', 'warn' );
-			state_change_in_progress = false;
 			window.history.back();
 			debugLog( '------' );
 		}
 
-		function runPageScripts( container ) {
+		function runPageScripts( receptacle_element ) {
 			debugLog( 'Running page scripts' );
-			const page_scripts = container.querySelectorAll( 'script' );
+			const page_scripts = receptacle_element.querySelectorAll( 'script' );
 			for ( let i = 0; i < page_scripts.length; i += 1 ) {
 				( new Function( page_scripts[i].innerHTML ) ).call( window );
 			}
@@ -133,26 +141,12 @@
 			title_element.innerHTML = title;
 		}
 
-		function highlightNav( page_id ) {
-			if ( typeof inputs.nav_items === 'undefined' || inputs.nav_items.length === 0 ) {
-				return;
-			}
-			debugLog( 'Highlighting navigation item "' + page_id + '"' );
-			for ( let i = 0; i < inputs.nav_items.length - 1; i += 1 ) {
-				const match_id = inputs.nav_items[i].getAttribute( 'data-tm-match' );
-				if ( match_id === page_id ) {
-					inputs.nav_items[i].classList.add( inputs.nav_selected_class );
-					continue;
-				}
-				inputs.nav_items[i].classList.remove( inputs.nav_selected_class );
-			}
-		}
-
-		function getUrlViaAjax( url, headers ) {
+		function loadUrlIntoReceptacle( url, receptacle_id, headers ) {
 			if ( !url ) {
 				return;
 			}
 			debugLog( 'Requesting new page "' + url + '"' );
+			last_load_url = url;
 			headers = headers || [];
 			const xmlhr = new XMLHttpRequest();
 			let request_completed = false;
@@ -164,7 +158,11 @@
 			xmlhr.addEventListener( 'readystatechange', () => {
 				if ( xmlhr.readyState === 4 && !request_completed ) {
 					if ( ( xmlhr.status >= 200 && xmlhr.status < 300 ) || xmlhr.status === 304 ) {
-						onLoadSuccess( xmlhr.response );
+						if ( url !== last_load_url ) {
+							debugLog( 'Skipping load, new load started after this one' );
+							return;
+						}
+						onLoadSuccess( xmlhr.response, receptacle_id );
 					} else {
 						onLoadFail();
 					}
@@ -182,8 +180,7 @@
 		}
 
 		return {
-			pushStateChange: pushStateChange,
-			setTitle: setTitle
+			pushStateChange: pushStateChange
 		};
 
 	};
