@@ -13,25 +13,28 @@ If a browser doesn't support pushState, Time Machine won't start up and the site
 
 ## Example usage
 
-Site frame:
+Page template:
 
 ```html
-<ul id="nav-primary">
-	<li><a href="rad-page">Rad Page</a></li>
+<ul>
 	<li><a href="cool-page">Cool Page</a></li>
+	<li><a href="rad-page">Rad Page</a></li>
 	<li><a href="lame-page">Lame Page</a></li>
 </ul>
 <div id="main">
-	<!-- Page content here -->
-</div>
-```
-
-Ajax page template:
-
-```html
-<div data-tm-title="Cool Page" data-tm-data='{"coolness":"very"}'>
-	<h1>Cool Page</h1>
-	<p>Nulla debitis earum impedit laboriosam minus? Officiis, maiores atque ea velit minima ex numquam quaerat quisquam? Delectus, hic porro voluptatem quod rem!</p>
+	<div data-tm-title="Cool Page" data-tm-data='{"coolness":"very"}'>
+		<ul>
+			<li><a data-tm-receptacle="sub" href="cool-page/1">Cool Page 1</a></li>
+			<li><a data-tm-receptacle="sub" href="cool-page/2">Cool Page 2</a></li>
+			<li><a data-tm-receptacle="sub" href="cool-page/3">Cool Page 3</a></li>
+		</ul>
+		<div id="sub">
+			<div data-tm-title="Cool Page 1" data-tm-data='{"coolness":"quite"}'>
+				<h1>Cool Page 1</h1>
+				<p>Nulla debitis earum impedit laboriosam minus? Officiis, maiores atque ea velit minima ex numquam quaerat quisquam? Delectus, hic porro voluptatem quod rem!</p>
+			</div>
+		</div>
+	</div>
 </div>
 ```
 
@@ -50,14 +53,20 @@ var time_machine = new TimeMachine( {
 		] );
 	},
 	afterNewPageLoad: function( updated_receptacle_id, page_data ){
-		if( page_data.coolness === "very" ){
+		highlightNav();
+		if ( updated_receptacle_id === 'sub' ) {
+			highlightSubnav();
+		}
+		if ( page_data.coolness === "very" ) {
 			console.log( 'So cool.' );
+		} elseif ( page_data.coolness === "quite" ) {
+			console.log( 'Cool.' );
 		}
 		document.body.className = '';
 	}
 } );
 
-// Example of manual load
+// Example of manual load (you probably don't need this)
 time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 ```
 
