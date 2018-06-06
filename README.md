@@ -86,7 +86,7 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 
 When a state change is detected, the loading process begins but the ajax request won't be automatic; the `beforeNewPageLoad` callback will be passed a function that triggers it. This means you can manually control when the old page disappears, giving you the opportunity to trigger any fancy page transition effects.
 
-The callback accepts an array of HTTP headers to send with the ajax request, which you can use to customise output on the server side. The example above demonstrates how your callback might look. If you're using server caching, make sure you set your `Vary "X-Requested-With,X-Custom-Header-1..."` header.
+The callback accepts an array of HTTP headers to send with the ajax request, which you can use to customise output on the server side. The example above demonstrates how your callback might look. If you're using server caching, make sure you set your `Vary "X-Custom-Header-1,X-Custom-Header-2..."` header.
 
 ## Title and data properties
 
