@@ -23,6 +23,7 @@ Page template:
 </ul>
 <div id="main">
 	<div data-tm-title="Cool Page" data-tm-data='{"coolness":"very"}'>
+		<p>Check out these cool pages:</p>
 		<ul>
 			<li><a data-tm-receptacle="sub" href="cool-page/1">Cool Page 1</a></li>
 			<li><a data-tm-receptacle="sub" href="cool-page/2">Cool Page 2</a></li>
@@ -31,7 +32,7 @@ Page template:
 		<div id="sub">
 			<div data-tm-title="Cool Page 1" data-tm-data='{"coolness":"quite"}'>
 				<h1>Cool Page 1</h1>
-				<p>Nulla debitis earum impedit laboriosam minus? Officiis, maiores atque ea velit minima ex numquam quaerat quisquam? Delectus, hic porro voluptatem quod rem!</p>
+				<p>Mitochondria is the powerhouse of the cell.</p>
 			</div>
 		</div>
 	</div>
@@ -59,7 +60,7 @@ var time_machine = new TimeMachine( {
 		}
 		if ( page_data.coolness === "very" ) {
 			console.log( 'So cool.' );
-		} elseif ( page_data.coolness === "quite" ) {
+		} else if ( page_data.coolness === "quite" ) {
 			console.log( 'Cool.' );
 		}
 		document.body.className = '';
