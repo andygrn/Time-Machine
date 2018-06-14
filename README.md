@@ -73,7 +73,7 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 
 ## Inputs
 
-- `default_ajax_receptacle_id` - The default `HTMLElement` the ajax template will be inserted into, unless the link specifies otherwise.
+- `default_ajax_receptacle_id` - The ID of the default `HTMLElement` the ajax template will be inserted into, unless the link specifies otherwise.
 - `beforeNewPageLoad` - (Optional) Function to run before a new page is loaded - its first argument is the receptacle ID that will be loaded into, its second argument is a function that must be called to perform the load.
 - `afterNewPageLoad` - (Optional) Function to run after a new page is loaded - its first argument is the receptacle ID that was loaded into, its second argument is the loaded page's data (`data-tm-data`).
 - `debug` - (Optional, Default `false`) Generate console messages.
