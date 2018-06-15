@@ -89,14 +89,13 @@
 
 		function onLoadSuccess( data, receptacle_id ) {
 			debugLog( 'Page data retrieved' );
-			const frag = document.createElement( 'div' );
+			const frag = ( new DOMParser() ).parseFromString( data, 'text/html' );
 			let receptacle_element = document.getElementById( receptacle_id );
 			if ( receptacle_element === null ) {
 				debugLog( 'Receptacle #' + receptacle_id + ' not found in current page, loading into default receptacle' );
 				receptacle_id = inputs.default_ajax_receptacle_id;
 				receptacle_element = default_ajax_receptacle;
 			}
-			frag.innerHTML = data;
 			receptacle_element.innerHTML = frag.querySelector( '#' + receptacle_id ).innerHTML;
 			const metadata_element = receptacle_element.firstElementChild;
 			const title = metadata_element.getAttribute( 'data-tm-title' );
