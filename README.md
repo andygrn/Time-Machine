@@ -25,7 +25,7 @@ Page template:
 	<div data-tm-title="Cool Page" data-tm-data='{"coolness":"very"}'>
 		<p>Check out these cool pages:</p>
 		<ul>
-			<li><a data-tm-receptacle="sub" href="cool-page/1">Cool Page 1</a></li>
+			<li><a data-tm-receptacle="overlay" data-tm-source="main" href="cool-page/1">Cool Page 1</a></li>
 			<li><a data-tm-receptacle="sub" href="cool-page/2">Cool Page 2</a></li>
 			<li><a data-tm-receptacle="sub" href="cool-page/3">Cool Page 3</a></li>
 		</ul>
@@ -94,7 +94,7 @@ The loaded ajax receptacle's first child element is the source of page title and
 
 ## Alternative receptacles
 
-By default, Time Machine will load the new page into the element specified by `default_ajax_receptacle_id`. If you want a different element's content to be updated, place a `data-tm-receptacle` attribute on the corresponding link tags, containing the ID of the element. Time Machine will load the new page, pluck that element's content from the response, and place it accordingly.
+By default, Time Machine will load the new page into the element specified by `default_ajax_receptacle_id`. If you want a different element's content to be updated, place a `data-tm-receptacle` attribute on the corresponding link tags, containing the ID of the element. Time Machine will load the new page, pluck that element's content from the response, and place it accordingly. You can also specify an alternate source element to inject into the ajax receptacle by adding the source element ID in a `data-tm-source` attribute on the link.
 
 Note that if you want the page title to change on alternative receptacle requests, the receptacles' first children will need their own `data-tm-title` attributes. JSON data with `data-tm-data` is also supported.
 
