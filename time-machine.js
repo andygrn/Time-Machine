@@ -95,7 +95,6 @@
 			return ( 'which' in e ? e.which === 3 : e.button === 2 );
 		}
 
-
 		function performStateChangeTasks( receptacle_id, source_id ) {
 			debugLog( 'Running "beforeNewPageLoad" callback' );
 			inputs.beforeNewPageLoad( receptacle_id, source_id, ( custom_headers ) => {
