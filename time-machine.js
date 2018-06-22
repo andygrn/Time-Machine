@@ -68,6 +68,9 @@
 					if ( path[0] !== '/' ) {
 						return;
 					}
+					if ( isShiftClick( event ) || isRightClick( event ) || target.hasAttribute( 'data-tm-disabled' ) ) {
+						return false;
+					}
 					event.preventDefault();
 					const link_receptacle_id = target.getAttribute( 'data-tm-receptacle' );
 					pushStateChange(
@@ -79,6 +82,15 @@
 				target = target.parentElement;
 			}
 		}
+
+		function isShiftClick( e ) {
+			return ( e.shiftKey || e.ctrlKey || e.metaKey );
+		}
+
+		function isRightClick( e ) {
+			return ( 'which' in e ? e.which === 3 : e.button === 2 );
+		}
+
 
 		function performStateChangeTasks( receptacle_id ) {
 			debugLog( 'Running "beforeNewPageLoad" callback' );
