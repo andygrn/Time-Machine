@@ -49,15 +49,15 @@
 			}
 		}
 
-		function pushStateChange( url, receptacle_id ) {
+		function pushStateChange( url, receptacle_id, source_id ) {
 			debugLog( 'Pushing new state "' + url + '" into receptacle "' + receptacle_id + '"' );
-			window.history.pushState( { receptacle: receptacle_id }, null, url );
-			performStateChangeTasks( receptacle_id );
+			window.history.pushState( { receptacle: receptacle_id, source: source_id }, null, url );
+			performStateChangeTasks( receptacle_id, source_id );
 		}
 
 		function handleStateChange( event ) {
 			debugLog( 'State change detected' );
-			performStateChangeTasks( event.state.receptacle );
+			performStateChangeTasks( event.state.receptacle, event.state.source );
 		}
 
 		function handlePotentialTriggerClick( event ) {
@@ -68,11 +68,18 @@
 					if ( path[0] !== '/' ) {
 						return;
 					}
+					if ( isShiftClick( event ) || isRightClick( event ) || target.hasAttribute( 'data-tm-disabled' ) ) {
+						return false;
+					}
 					event.preventDefault();
 					const link_receptacle_id = target.getAttribute( 'data-tm-receptacle' );
+					const link_source_id = target.getAttribute( 'data-tm-source' );
+					// If no source defined, use the final receptacle id by default
+					const final_receptacle_id = ( link_receptacle_id === null ? inputs.default_ajax_receptacle_id : link_receptacle_id );
 					pushStateChange(
 						target.href,
-						( link_receptacle_id === null ? inputs.default_ajax_receptacle_id : link_receptacle_id )
+						final_receptacle_id,
+						( link_source_id === null ? final_receptacle_id : link_source_id )
 					);
 					return;
 				}
@@ -80,14 +87,23 @@
 			}
 		}
 
-		function performStateChangeTasks( receptacle_id ) {
+		function isShiftClick( e ) {
+			return ( e.shiftKey || e.ctrlKey || e.metaKey );
+		}
+
+		function isRightClick( e ) {
+			return ( 'which' in e ? e.which === 3 : e.button === 2 );
+		}
+
+
+		function performStateChangeTasks( receptacle_id, source_id ) {
 			debugLog( 'Running "beforeNewPageLoad" callback' );
-			inputs.beforeNewPageLoad( receptacle_id, ( custom_headers ) => {
-				loadUrlIntoReceptacle( window.location.href, receptacle_id, custom_headers );
+			inputs.beforeNewPageLoad( receptacle_id, source_id, ( custom_headers ) => {
+				loadUrlIntoReceptacle( window.location.href, receptacle_id, source_id, custom_headers );
 			} );
 		}
 
-		function onLoadSuccess( data, receptacle_id ) {
+		function onLoadSuccess( data, receptacle_id, source_id ) {
 			debugLog( 'Page data retrieved' );
 			const frag = ( new DOMParser() ).parseFromString( data, 'text/html' );
 			let receptacle_element = document.getElementById( receptacle_id );
@@ -96,7 +112,7 @@
 				receptacle_id = inputs.default_ajax_receptacle_id;
 				receptacle_element = default_ajax_receptacle;
 			}
-			receptacle_element.innerHTML = frag.querySelector( '#' + receptacle_id ).innerHTML;
+			receptacle_element.innerHTML = frag.querySelector( '#' + source_id ).innerHTML;
 			const metadata_element = receptacle_element.firstElementChild;
 			const title = metadata_element.getAttribute( 'data-tm-title' );
 			if ( title !== null ) {
@@ -140,7 +156,7 @@
 			title_element.innerHTML = title;
 		}
 
-		function loadUrlIntoReceptacle( url, receptacle_id, headers ) {
+		function loadUrlIntoReceptacle( url, receptacle_id, source_id, headers ) {
 			if ( !url ) {
 				return;
 			}
@@ -161,7 +177,7 @@
 							debugLog( 'Skipping load, new load started after this one' );
 							return;
 						}
-						onLoadSuccess( xmlhr.response, receptacle_id );
+						onLoadSuccess( xmlhr.response, receptacle_id, source_id );
 					} else {
 						onLoadFail();
 					}
