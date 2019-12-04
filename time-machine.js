@@ -109,6 +109,7 @@
 			if ( receptacle_element === null ) {
 				debugLog( 'Receptacle #' + receptacle_id + ' not found in current page, loading into default receptacle' );
 				receptacle_id = inputs.default_ajax_receptacle_id;
+				source_id = inputs.default_ajax_receptacle_id;
 				receptacle_element = default_ajax_receptacle;
 			}
 			receptacle_element.innerHTML = frag.querySelector( '#' + source_id ).innerHTML;
