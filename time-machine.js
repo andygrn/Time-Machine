@@ -109,11 +109,17 @@
 			if ( receptacle_element === null ) {
 				debugLog( 'Receptacle #' + receptacle_id + ' not found in current page, loading into default receptacle' );
 				receptacle_id = inputs.default_ajax_receptacle_id;
-				source_id = inputs.default_ajax_receptacle_id;
 				receptacle_element = default_ajax_receptacle;
 			}
-			receptacle_element.innerHTML = frag.querySelector( '#' + source_id ).innerHTML;
-			const metadata_element = receptacle_element.firstElementChild;
+			let metadata_element;
+			if ( typeof source_id === 'undefined' || source_id === null ) {
+				const source_element = frag.querySelector( '#' + receptacle_id ).firstElementChild;
+				receptacle_element.innerHTML = source_element.innerHTML;
+				metadata_element = source_element;
+			} else {
+				receptacle_element.innerHTML = frag.querySelector( '#' + source_id ).innerHTML;
+				metadata_element = receptacle_element.firstElementChild;
+			}
 			const title = metadata_element.getAttribute( 'data-tm-title' );
 			if ( title !== null ) {
 				setTitle( title );
