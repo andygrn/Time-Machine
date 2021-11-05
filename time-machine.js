@@ -152,6 +152,12 @@
 			debugLog( 'Running page scripts' );
 			const page_scripts = receptacle_element.querySelectorAll( 'script' );
 			for ( let i = 0; i < page_scripts.length; i += 1 ) {
+				if (
+					page_scripts[i].type !== ''
+					&& page_scripts[i].type !== 'text/javascript'
+				) {
+					continue;
+				}
 				( new Function( page_scripts[i].innerHTML ) ).call( window );
 			}
 		}
