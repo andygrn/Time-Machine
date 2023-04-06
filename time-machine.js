@@ -29,7 +29,7 @@
 		const host_regex = new RegExp( '^' + window.location.protocol + '//' + window.location.host, 'i' );
 		const default_ajax_receptacle = document.getElementById( inputs.default_ajax_receptacle_id );
 		const title_element = document.querySelector( 'title' );
-		let last_load_url = null;
+		let last_load_url = window.location.href;
 
 		window.history.replaceState( { receptacle: inputs.default_ajax_receptacle_id }, null, null );
 
@@ -49,6 +49,11 @@
 			}
 		}
 
+		function isSamePageUrl( url1, url2 ) {
+			return url1.replace( host_regex, '' ).split( '#' )[0]
+				=== url2.replace( host_regex, '' ).split( '#' )[0];
+		}
+
 		function pushStateChange( url, receptacle_id, source_id ) {
 			debugLog( 'Pushing new state "' + url + '" into receptacle "' + receptacle_id + '"' );
 			window.history.pushState( { receptacle: receptacle_id, source: source_id }, null, url );
@@ -57,6 +62,11 @@
 
 		function handleStateChange( event ) {
 			debugLog( 'State change detected' );
+			if ( isSamePageUrl( last_load_url, window.location.href ) ) {
+				debugLog( 'Same page, ignoring' );
+				window.history.replaceState( { receptacle: inputs.default_ajax_receptacle_id }, null, null );
+				return;
+			}
 			performStateChangeTasks( event.state.receptacle, event.state.source );
 		}
 
@@ -67,6 +77,9 @@
 					const path = target.href.replace( host_regex, '' );
 					if ( path[0] !== '/' ) {
 						return;
+					}
+					if ( isSamePageUrl( target.href, window.location.href ) ) {
+						return false;
 					}
 					if ( isShiftClick( event ) || isRightClick( event ) || target.hasAttribute( 'data-tm-disabled' ) ) {
 						return false;
