@@ -32,7 +32,7 @@ Page template:
 		<div id="sub">
 			<div data-tm-title="Cool Page 1" data-tm-data='{"coolness":"quite"}'>
 				<h1>Cool Page 1</h1>
-				<p>Mitochondria is the powerhouse of the cell.</p>
+				<p>Mitochondria are the powerhouse of the cell.</p>
 			</div>
 		</div>
 	</div>
