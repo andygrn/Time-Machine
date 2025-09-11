@@ -28,6 +28,7 @@ Page template:
 			<li><a data-tm-receptacle="overlay" data-tm-source="main" href="cool-page/1">Cool Page 1</a></li>
 			<li><a data-tm-receptacle="sub" href="cool-page/2">Cool Page 2</a></li>
 			<li><a data-tm-receptacle="sub" href="cool-page/3">Cool Page 3</a></li>
+			<li><a data-tm-disabled href="cool-page/4">Time Machine won't handle this link</a></li>
 		</ul>
 		<div id="sub">
 			<div data-tm-title="Cool Page 1" data-tm-data='{"coolness":"quite"}'>
