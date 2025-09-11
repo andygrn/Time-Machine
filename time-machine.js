@@ -10,6 +10,7 @@
 	window.TimeMachine = function( inputs ) {
 
 		const debug = inputs.debug ? true : false;
+		const disabled_paths = inputs.disabled_paths ?? [];
 
 		if ( !( window.history && window.history.pushState ) ) {
 			debugLog( 'History API is unsupported - Time Machine disabled' );
@@ -70,6 +71,15 @@
 			performStateChangeTasks( event.state.receptacle, event.state.source );
 		}
 
+		function pathIsDisabled( path ) {
+			for ( let i = 0; i < disabled_paths.length; i += 1 ) {
+				if ( disabled_paths[i].test( path ) ) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		function handlePotentialTriggerClick( event ) {
 			let target = event.target;
 			while ( target !== null ) {
@@ -82,6 +92,9 @@
 						return false;
 					}
 					if ( isShiftClick( event ) || isRightClick( event ) || target.hasAttribute( 'data-tm-disabled' ) ) {
+						return false;
+					}
+					if ( pathIsDisabled( path ) ) {
 						return false;
 					}
 					event.preventDefault();

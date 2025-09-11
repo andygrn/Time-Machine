@@ -46,6 +46,9 @@ Javascript:
 var time_machine = new TimeMachine( {
 	default_ajax_receptacle_id: 'main',
 	debug: true,
+	disabled_paths: [
+		new RegExp( '^/uploads/' ),
+	],
 	beforeNewPageLoad: function( updated_receptacle_id, loadPage ){
 		document.body.className = 'loading';
 		// do something fancy, then...
@@ -78,6 +81,7 @@ time_machine.pushStateChange( 'http://www.website.com/rad-page' );
 - `beforeNewPageLoad` - (Optional) Function to run before a new page is loaded - its first argument is the receptacle ID that will be loaded into, its second argument is a function that must be called to perform the load.
 - `afterNewPageLoad` - (Optional) Function to run after a new page is loaded - its first argument is the receptacle ID that was loaded into, its second argument is the loaded page's data (`data-tm-data`).
 - `debug` - (Optional, Default `false`) Generate console messages.
+- `disabled_paths` - (Optional) An array of path regexes - Time Machine will ignore any links whose target HREFs match any of these rules. Useful for ignoring CDN paths.
 
 ## Methods
 
